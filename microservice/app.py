@@ -11,6 +11,6 @@ def foo():
         sv.variables[key] = data[key]
     
     try:
-        return send_file(sv.drawgraph(), attachment_filename=f"{sv.variables['filename']}.{sv.variables['output']}")
+        return send_file(sv.drawGraph(), attachment_filename=f"{sv.variables['filename']}.{sv.variables['output']}")
     except Exception as e:
         return str(e)
