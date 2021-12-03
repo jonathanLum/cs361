@@ -31,27 +31,35 @@ variables = {'fig': False,
              'entrycount': 1
              }
 
-def drawgraph():
-    # make fig and plot
-    fig = plt.figure(figsize=variables['size'], dpi=variables['dpi'])
 
-    # PLOT BY FORMAT
+def setupGraph():
+    fig = plt.figure(figsize=variables['size'], dpi=variables['dpi'])
+    variables['fig'] = fig
+
+
+def plotGraph():
+    # PLOT BASED ON FORMAT
     if variables['format'] == "line":
         for i in range(variables['entrycount']):
-            plt.plot(data[i][X], data[i][Y], color=data[i][COLOR] if data[i][COLOR] != "" else "k", label=data[i][NAME], marker="o")
+            plt.plot(data[i][X], data[i][Y], color=data[i][COLOR] if data[i][COLOR] != "" else "k", label=data[i][NAME],
+                     marker="o")
     elif variables['format'] == "bar":
         spc = np.arange(len(data[0][X]))
-        barW = 1/(variables['entrycount']+1)
+        barW = 1 / (variables['entrycount'] + 1)
         for i in range(variables['entrycount']):
-            if data[i][Y] == []:
+            if not data[i][Y]:
                 continue
-            plt.bar(spc + (i * barW), data[i][Y], width=barW, color=data[i][COLOR] if data[i][COLOR] != "" else "lightblue", edgecolor="k", align='edge', label=data[i][NAME])
+            plt.bar(spc + (i * barW), data[i][Y], width=barW,
+                    color=data[i][COLOR] if data[i][COLOR] != "" else "lightblue", edgecolor="k", align='edge',
+                    label=data[i][NAME])
         plt.xticks(spc + ((variables['entrycount']) * barW) / 2, data[0][X])
     elif variables['format'] == "point":
         for i in range(variables['entrycount']):
-            plt.plot(data[i][X], data[i][Y], ".", color=data[i][COLOR] if data[i][COLOR] != "" else "k", label=data[i][NAME])
+            plt.plot(data[i][X], data[i][Y], ".", color=data[i][COLOR] if data[i][COLOR] != "" else "k",
+                     label=data[i][NAME])
 
-    # ADD STYLE
+
+def styleGraph():
     plt.title(variables['title'])
     plt.xlabel(variables['xlabel'])
     plt.ylabel(variables['ylabel'])
@@ -59,23 +67,26 @@ def drawgraph():
         plt.legend(loc=0)
     if variables['grid']:
         if variables['format'] == "bar":
-            plt.grid(True, color="0.5", axis="y", dashes=(5,2,1,2))
+            plt.grid(True, color="0.5", axis="y", dashes=(5, 2, 1, 2))
         else:
-            plt.grid(True, color="0.5", dashes=(5,2,1,2))
+            plt.grid(True, color="0.5", dashes=(5, 2, 1, 2))
     else:
         plt.grid(False)
     if variables['color'] != "":
-        fig.set_facecolor(variables['color'])
+        variables['fig'].set_facecolor(variables['color'])
 
-    variables['fig'] = fig
-    return fig
+
+def drawGraph():
+    plotGraph()
+    styleGraph()
+    return variables['fig']
 
 
 def updateGraph(new=True):
     if not new:
         variables['fig_agg'].get_tk_widget().forget()
         plt.clf()
-    variables['fig_agg'] = render_figure(variables['window']['-CANVAS-'].TKCanvas, drawgraph())
+    variables['fig_agg'] = renderFigure(variables['window']['-CANVAS-'].TKCanvas, drawGraph())
 
 
 def clearGraph():
@@ -90,7 +101,7 @@ def clearGraph():
     variables['ylabel'] = ""
 
 
-def render_figure(canvas, figure):
+def renderFigure(canvas, figure):
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
     figure_canvas_agg.draw()
     figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)

@@ -46,6 +46,24 @@ def updateVisRows(entry=None, add=None):
             window[w.ENTRY_KEY + f"{entry}-ROW{len(g.data[entry-1][0])+1}-"].update(visible=False)
 
 
+def hoverCursor():
+    # CHANGE CURSOR OVER CLICKABLE
+    window["-LANGUAGE-"].set_cursor("hand2")
+    window["-FORMAT-"].set_cursor("hand2")
+    window["-OUTPUT-"].set_cursor("hand2")
+    window['-SAVE-'].set_cursor("hand2")
+    window[w.SEC1_KEY + "-TITLE-"].set_cursor("hand2")
+    window[w.SEC1_KEY + "-BUTTON-"].set_cursor("hand2")
+    window[w.SEC2_KEY + "-TITLE-"].set_cursor("hand2")
+    window[w.SEC2_KEY + "-BUTTON-"].set_cursor("hand2")
+    for i in range(w.entryLimit):
+        window[f"-ENTRY{i + 1}-TITLE-"].set_cursor("hand2")
+        window[f"-ENTRY{i + 1}-BUTTON-"].set_cursor("hand2")
+    window['-ADDENTRY-'].set_cursor("hand2")
+    window['-SUBENTRY-'].set_cursor("hand2")
+    window["-CLEAR-"].set_cursor("hand2")
+
+
 def setupWindow():
     window.maximize()
     window[w.ENTRY_KEY + "1-PIN-"].update(visible=True)
@@ -62,22 +80,7 @@ def setupWindow():
         window[w.ENTRY_KEY+f"1-X{i}-"].update(value=str(g.data[0][0][i]))
         window[w.ENTRY_KEY+f"1-Y{i}-"].update(value=str(g.data[0][1][i]))
 
-    # CHANGE CURSOR OVER CLICKABLE
-    window["-LANGUAGE-"].set_cursor("hand2")
-    window["-FORMAT-"].set_cursor("hand2")
-    window["-OUTPUT-"].set_cursor("hand2")
-    window['-SAVE-'].set_cursor("hand2")
-    window[w.SEC1_KEY+"-TITLE-"].set_cursor("hand2")
-    window[w.SEC1_KEY+"-BUTTON-"].set_cursor("hand2")
-    window[w.SEC2_KEY+"-TITLE-"].set_cursor("hand2")
-    window[w.SEC2_KEY+"-BUTTON-"].set_cursor("hand2")
-    for i in range(w.entryLimit):
-        window[f"-ENTRY{i+1}-TITLE-"].set_cursor("hand2")
-        window[f"-ENTRY{i+1}-BUTTON-"].set_cursor("hand2")
-    window['-ADDENTRY-'].set_cursor("hand2")
-    window['-SUBENTRY-'].set_cursor("hand2")
-    window["-CLEAR-"].set_cursor("hand2")
-
+    hoverCursor()
     g.variables['window'] = window
     g.updateGraph(w.entryCount)
 
@@ -123,12 +126,13 @@ def updateAllText():
     window["-CLEAR-"].set_tooltip(w.text["tips"][6])
 
 
+g.setupGraph()
 window = w.createWindow()
 setupWindow()
 
 while True:             # Event Loop
     event, values = window.read()
-    #print(event, values)
+
     if event == sg.WIN_CLOSED or event == 'Exit':
         break
 
@@ -196,14 +200,11 @@ while True:             # Event Loop
         validD = re.match(floatReg, event[10])
         if validD:
             inputNum += event[10]
-        #print(inputLetter)
-        #print(inputNum)
         # CHANGE IN STYLING
         if event.endswith("-LABEL-") or event.endswith("-COLOR-"):
             g.data[int(entryNum)-1][3] = values[f"{w.ENTRY_KEY}{entryNum}-LABEL-"]
             g.data[int(entryNum)-1][2] = values[f"{w.ENTRY_KEY}{entryNum}-COLOR-"]
             g.updateGraph(False)
-            print(g.data)
         # CHANGE IN INPUTS
         elif inputLetter == "X" or inputLetter == "Y":
             userInputX = values[w.ENTRY_KEY+entryNum+f"-X{inputNum}-"]
@@ -217,7 +218,6 @@ while True:             # Event Loop
                 else:
                     g.data[int(entryNum)-1][0][int(inputNum)] = float(userInputX)
                     g.data[int(entryNum)-1][1][int(inputNum)] = float(userInputY)
-                #print(g.data)
                 updateVisRows(int(entryNum), True)
                 g.updateGraph(False)
             elif userInputX == "" and userInputY == "" and int(inputNum) == len(g.data[int(entryNum)-1][0])-1:
@@ -244,7 +244,8 @@ while True:             # Event Loop
             # You will need to serialize the dictionary to JSON before sending request.
             json_object = json.dumps(dictToSend, indent=1)
             # HOW TO FORMAT THE POST REQUEST....
-            pop = sg.Window(w.text["tips"][8], [[sg.T(w.text["tips"][8])]], no_titlebar=True, keep_on_top=True, font=w.generalFont, finalize=True)
+            pop = sg.Window(w.text["tips"][8], [[sg.T(w.text["tips"][8])]], no_titlebar=True, keep_on_top=True,
+                            font=w.generalFont, finalize=True)
             pop.read(timeout=10)
             response = requests.post(url + "translateArray/" + language, json=json_object)
             # OVERWRITE TEXT

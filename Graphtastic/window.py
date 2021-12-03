@@ -142,8 +142,12 @@ entryCount = 1
 # CREATE ENTRIES AND ADD TO DATA COLUMN
 for i in range(entryLimit):
     entryKey = ENTRY_KEY + f"{i+1}"
-    entries = [[sg.Text(f"{text['style'][4]}:", key=f"{entryKey}-LABEL-T"), sg.Input(key=f"{entryKey}-LABEL-", font=inputFont, size=(12, 1), enable_events=True), sg.Text(f"{text['style'][3]}:", key=f"{entryKey}-COLOR-T"), sg.Input(key=f"{entryKey}-COLOR-", font=inputFont, size=(12, 1), enable_events=True)]]
-    entries += [[sg.pin(sg.Column([[sg.Text(f"{i+1}.  X: ", font=inputFont), sg.Input(key=entryKey + f"-X{i}-", font=inputFont, size=(12, 1), enable_events=True), sg.Text("Y: ", font=inputFont), sg.Input(key=entryKey + f"-Y{i}-", font=inputFont, size=(12, 1), enable_events=True)]], key=entryKey + f"-ROW{i}-", visible=False))] for i in range(inputsLimit)]
+    entries = [[sg.Text(f"{text['style'][4]}:", key=f"{entryKey}-LABEL-T"), sg.Input(key=f"{entryKey}-LABEL-", font=inputFont, size=(12, 1), enable_events=True),
+                sg.Text(f"{text['style'][3]}:", key=f"{entryKey}-COLOR-T"), sg.Input(key=f"{entryKey}-COLOR-", font=inputFont, size=(12, 1), enable_events=True)]]
+
+    entries += [[sg.pin(sg.Column([[sg.Text(f"{i+1}.  X: ", font=inputFont), sg.Input(key=entryKey + f"-X{i}-", font=inputFont, size=(12, 1), enable_events=True),
+                sg.Text("Y: ", font=inputFont), sg.Input(key=entryKey + f"-Y{i}-", font=inputFont, size=(12, 1), enable_events=True)]], key=entryKey + f"-ROW{i}-", visible=False))] for i in range(inputsLimit)]
+
     datacol += [sg.pin(collapsible(entries, entryKey,  text["entry"][0] + f" {i+1}", collapsed=True))],
 # ADD ENTRY AND CLEAR BUTTONS TO DATA COLUMN
 datacol += [
